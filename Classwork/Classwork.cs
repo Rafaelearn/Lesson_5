@@ -11,6 +11,7 @@ namespace Classwork
         private const double WIDTH = 1.5;
         private const string PathToListStudent = @"..\..\files\ListStudents.txt";
         private const string PathToListEmployees = @"..\..\files\ListEmployees.txt";
+        private const string PathToListTablesForEmployees = @"..\..\files\ListTables.txt";
 
         struct Student
         {
@@ -23,7 +24,7 @@ namespace Classwork
         struct Table
         {
             public string colour;
-            public uint number;
+            public byte number;
             public List<Employee> persons;
         }
         struct Employee
@@ -40,7 +41,7 @@ namespace Classwork
             //DoTask1();
             //DoTask2();
             //DoTask3();
-            DoTask4();
+            //DoTask4();
             //DoTask5();
             Console.ReadKey();
         }
@@ -85,8 +86,8 @@ namespace Classwork
         }
         static void DoTask3()
         {
-            List<Student> studentsList = new List<Student>();
-            using (StreamReader fileTextRead = new StreamReader(PathToListStudent, System.Text.Encoding.Default))
+            Dictionary<string, Student> studentDict = new Dictionary<string, Student>();
+            using (StreamReader fileTextRead = new StreamReader(PathToListStudent))
             {
                 string stringfromfile;
                 int numberString = 1;
@@ -112,7 +113,7 @@ namespace Classwork
                         {
                             throw new FormatException($"fileListStudents. Wrong format of scorces. String {numberString}");
                         }
-                        studentsList.Add(studentNew);
+                        studentDict.Add(dateStudent[0]+" "+dateStudent[1], studentNew);
                     }
                     numberString++;
                 }
@@ -148,29 +149,29 @@ namespace Classwork
                             Console.WriteLine("Wrong format of scores. New student of user");
                             break;
                         }
-                        studentsList.Add(studentNew);
+                        studentDict.Add(studentNew.lastName + " "+ studentNew.name, studentNew);
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
-                        Console.Write("Введите фамилию студента: ");
-                        string lastNameRemofe = Console.ReadLine();
-                        Console.Write("Введите имя студента: ");
-                        string nameRemofe = Console.ReadLine();
-                        foreach (Student student in studentsList)
+                        Console.Write("Введите фамилию и имя студента через пробел: ");
+                        string studentRemofe = Console.ReadLine();
+                        if (!studentDict.Remove(studentRemofe))
                         {
-                            if (student.name.Equals(nameRemofe) && student.lastName.Equals(lastNameRemofe))
-                            {
-                                studentsList.Remove(student);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Такого студента не сущетсвует");
-                            }
+                            Console.WriteLine("Такого студента не сущетсвует");
                         }
                         break;
                     case ConsoleKey.D3:
                     case ConsoleKey.NumPad3:
-                        QuickSortListStruct(studentsList);
+                        List<Student> studentsList = new List<Student>();
+                        foreach (var item in studentDict)
+                        {
+                            studentsList.Add(item.Value);
+                        }
+                        foreach (var item in QuickSortListStruct(studentsList))
+                        {
+                            Console.WriteLine(item.lastName + " "+ item.name + " "
+                                +item.yearOFBirth + " "+ item.subjectBase + " "+ item.scores);
+                        }
                         break;
                     default:
                         flag = false;
@@ -181,7 +182,17 @@ namespace Classwork
         static void DoTask4()
         {
             Queue<Employee> queEmployee = new Queue<Employee>();
+            Stack<Table> stackTable = new Stack<Table>();
+            Stack<Table> containerStack = new Stack<Table>();
+            AddTableFromFile(ref stackTable);
             FillQueueOfEmployees(ref queEmployee);
+            while (queEmployee.Count != 0)
+            {
+                Employee currentEmployee = queEmployee.Dequeue();
+                //stackTable
+            }
+
+
 
 
         }
@@ -344,6 +355,34 @@ namespace Classwork
             {
                 //Console.WriteLine(item.name + " " + item.position); Проверка
                 queueEmployee.Enqueue(item);
+            }
+        }
+        static void AddTableFromFile (ref Stack<Table> tables)
+        {
+            using (StreamReader fileTextRead = new StreamReader(PathToListTablesForEmployees))
+            {
+                string stringfromfile;
+                int numberString = 1;
+                while ((stringfromfile = fileTextRead.ReadLine()) != null)
+                {
+                    string[] dateTable = stringfromfile.Split();
+                    if (dateTable.Length != 2)
+                    {
+                        Console.WriteLine($"Длина  строки {numberString} не соответсвует формату");
+                    }
+                    else
+                    {
+                        Table newTable;
+                        newTable.persons = new List<Employee>();
+                        newTable.colour = dateTable[0];
+                        if (!byte.TryParse(dateTable[1], out newTable.number) || newTable.number == 0)
+                        {
+                            throw new FormatException($"Номер стола из строки  №{numberString} из файла не соответсвует формату");
+                        }
+                        tables.Push(newTable);
+                    }
+                    numberString++;
+                }
             }
         }
     }
