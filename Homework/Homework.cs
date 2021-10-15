@@ -10,6 +10,7 @@ namespace Homework
         {
             DoTask1();
             DoTask2();
+            
             Console.ReadKey();
         }
         static void DoTask1()
