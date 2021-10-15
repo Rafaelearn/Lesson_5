@@ -109,7 +109,11 @@ namespace Classwork
         }
         static void DoTask2()
         {
-           
+            List<Image> imageList = new List<Image>();
+            for (int i = 0; i < 64; i++)
+            {
+                imageList.Add(Image.FromFile(@"" +@"{i}"));
+            }
         }
         static void DoTask3()
         {
