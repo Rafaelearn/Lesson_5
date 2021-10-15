@@ -10,6 +10,7 @@ namespace Classwork
     {
         private const double WIDTH = 1.5;
         private const string PathToListStudent = @"..\..\files\ListStudents.txt";
+        private const string PathToListEmployees = @"..\..\files\ListEmployees.txt";
 
         struct Student
         {
@@ -19,14 +20,28 @@ namespace Classwork
             public ushort yearOFBirth;
             public ushort scores;
         }
+        struct Table
+        {
+            public string colour;
+            public uint number;
+            public List<Employee> persons;
+        }
+        struct Employee
+        {
+            public string name;
+            public string position;
+            public byte impudence;
+            public bool stupidity;
+         //   public List<Employee> mates;
+        }
 
         static void Main(string[] args)
         {
             //DoTask1();
-            DoTask2();
-            DoTask3();
+            //DoTask2();
+            //DoTask3();
             DoTask4();
-            DoTask5();
+            //DoTask5();
             Console.ReadKey();
         }
         static void DoTask1()
@@ -41,7 +56,7 @@ namespace Classwork
             for (int i = 0; i < arrayBavarian.Length; i++)
             {
                 Console.Write($"{i} цифра команды  Bavarian Beer Bears: ");
-                if (!byte.TryParse(Console.ReadLine(), out arrayBavarian[i]) || arrayBavarian[i] == 0 || arrayBavarian[i] > 9)
+                if (!byte.TryParse(Console.ReadLine(), out arrayBavarian[i]) || arrayBavarian[i] > 9)
                 {
                     Console.WriteLine("Рефери, Бьорг, объявляет, что это не цифра и \"вежливо\" просит переходить!");
                     i--;
@@ -56,7 +71,7 @@ namespace Classwork
             for (int i = 0; i < arrayScandin.Length; i++)
             {
                 Console.Write($"{i} цифра команды Scandinavian Schöllers: ");
-                if (!byte.TryParse(Console.ReadLine(), out arrayScandin[i]) || arrayScandin[i] == 0 || arrayScandin[i] > 9)
+                if (!byte.TryParse(Console.ReadLine(), out arrayScandin[i]) || arrayScandin[i] > 9)
                 {
                     Console.WriteLine("Рефери, Бьорг, объявляет, что это не цифра и \"вежливо\" просит переходить!");
                     i--;
@@ -65,6 +80,10 @@ namespace Classwork
             Console.Write(GetResultOfGameVikings(arrayBavarian, arrayScandin));
         }
         static void DoTask2()
+        {
+           
+        }
+        static void DoTask3()
         {
             List<Student> studentsList = new List<Student>();
             using (StreamReader fileTextRead = new StreamReader(PathToListStudent, System.Text.Encoding.Default))
@@ -141,7 +160,7 @@ namespace Classwork
                         {
                             if (student.name.Equals(nameRemofe) && student.lastName.Equals(lastNameRemofe))
                             {
-                               studentsList.Remove(student); 
+                                studentsList.Remove(student);
                             }
                             else
                             {
@@ -158,14 +177,12 @@ namespace Classwork
                         break;
                 }
             }
-            
-        }
-        static void DoTask3()
-        {
-
         }
         static void DoTask4()
         {
+            Queue<Employee> queEmployee = new Queue<Employee>();
+            FillQueueOfEmployees(ref queEmployee);
+
 
         }
         static void DoTask5()
@@ -276,6 +293,58 @@ namespace Classwork
 
             return list;
         }
-
+        static void FillQueueOfEmployees (ref Queue<Employee> queueEmployee)
+        {
+            List<Employee> listEmployees = new List<Employee>();
+            using (StreamReader fileTextRead = new StreamReader(PathToListEmployees))
+            {
+                string stringfromfile;
+                int numberString = 1;
+                while ((stringfromfile = fileTextRead.ReadLine()) != null)
+                {
+                    string[] dateEmployee = stringfromfile.Split();
+                    if (dateEmployee.Length != 4)
+                    {
+                        Console.WriteLine($"Длина  строки {numberString} не соответсвует формату");
+                    }
+                    else
+                    {
+                        Employee newEmployee;
+                        newEmployee.name = dateEmployee[0];
+                        newEmployee.position = dateEmployee[1];
+                        if (!byte.TryParse(dateEmployee[2], out newEmployee.impudence) || newEmployee.impudence > 10)
+                        {
+                            throw new FormatException($"Нагласть сотрудника строки {numberString} из файла не соответсвует формату");
+                        }
+                        newEmployee.stupidity = dateEmployee[3].ToLower().Equals("тупой");
+                        if (newEmployee.stupidity)
+                        {
+                            if (newEmployee.impudence >= listEmployees.Count)
+                            {
+                                listEmployees.Insert(0, newEmployee);
+                            }
+                            else if (newEmployee.impudence == 0)
+                            {
+                                listEmployees.Insert(listEmployees.Count - 1, newEmployee);
+                            }
+                            else
+                            {
+                                listEmployees.Insert(listEmployees.Count - newEmployee.impudence, newEmployee);
+                            }
+                        }
+                        else
+                        {
+                            listEmployees.Add(newEmployee);
+                        }
+                    }
+                    numberString++;
+                }
+            }
+            foreach (var item in listEmployees)
+            {
+                //Console.WriteLine(item.name + " " + item.position); Проверка
+                queueEmployee.Enqueue(item);
+            }
+        }
     }
 }
