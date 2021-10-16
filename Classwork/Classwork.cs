@@ -8,7 +8,6 @@ namespace Classwork
 {
     class Classwork
     {
-        private const double WIDTH = 1.5;
         private const string PathToListStudent = @"..\..\files\ListStudents.txt";
         private const string PathToListEmployees = @"..\..\files\ListEmployees.txt";
         private const string PathToListTablesForEmployees = @"..\..\files\ListTables.txt";
@@ -525,20 +524,6 @@ namespace Classwork
                 Console.WriteLine("Ой, Бьорг - пончик! Ни для кого пива!");
                 return "";
             }
-        }
-        static void PrintImage(Bitmap bitmap)
-        {
-
-        }
-        static Bitmap ResizeBitmap(Bitmap bitmap)
-        {
-            int maxWidth = 100;
-            double newHeight = bitmap.Height / WIDTH * maxWidth / bitmap.Width;
-            if (bitmap.Width > maxWidth || bitmap.Height > newHeight)
-            {
-                bitmap = new Bitmap(bitmap, new Size(maxWidth, (int)newHeight));
-            }
-            return bitmap;
         }
         static void Swap(int key1 , int key2 , ref Dictionary<int, Student> dict)
         {
