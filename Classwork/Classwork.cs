@@ -66,9 +66,9 @@ namespace Classwork
 
         static void Main(string[] args)
         {
-            DoTask1();
-            DoTask2();
-            DoTask3();
+           // DoTask1();
+          //  DoTask2();
+           // DoTask3();
             DoTask4();
             DoTask5();
             Console.ReadKey();
@@ -273,7 +273,7 @@ namespace Classwork
                         if(currentTable.persons.Count < 3)
                         {
                             tableLastFree = currentTable;
-                            // foreach (var item in currentTable.persons) Почему выдает ошибку?
+                            //foreach (var item in currentTable.persons) Почему выдает ошибку?
                             //Исправление правильно?
                             foreach (var item in currentTable.persons.ToArray())
                             {

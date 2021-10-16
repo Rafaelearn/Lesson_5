@@ -200,7 +200,7 @@ namespace Lab_5
             char[] consantsChar = "bcdfghjklmnpqrstvwxyz".ToCharArray();
             foreach (var item in arrayChar)
             {
-                if (Array.IndexOf(volewsChar, item) != -1)
+                if (Array.IndexOf(volewsChar, item) != -1) //matcher
                 {
                     volews++;
                 }
