@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lab_5
 {
@@ -27,7 +26,7 @@ namespace Lab_5
         static void Main(string[] args)
         {
             DoClasswork();
-            //DoHomework();
+            DoHomework();
             Console.ReadKey();
         }
         static void DoClasswork() 

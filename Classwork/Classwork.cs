@@ -66,11 +66,11 @@ namespace Classwork
 
         static void Main(string[] args)
         {
-            //DoTask1();
-            //DoTask2();
-            //DoTask3();
+            DoTask1();
+            DoTask2();
+            DoTask3();
             DoTask4();
-            //DoTask5();
+            DoTask5();
             Console.ReadKey();
         }
         static void DoTask1()
@@ -253,6 +253,7 @@ namespace Classwork
             {
                 Employee currentEmployee = queEmployee.Dequeue();
                 Table tableLastFree;
+                // Table currentTable = new Table(); В чем отличие?
                 Table currentTable;
                 tableLastFree.colour = "";
                 tableLastFree.number = 0;
@@ -272,7 +273,9 @@ namespace Classwork
                         if(currentTable.persons.Count < 3)
                         {
                             tableLastFree = currentTable;
-                           foreach (var item in currentTable.persons.ToArray())
+                            // foreach (var item in currentTable.persons) Почему выдает ошибку?
+                            //Исправление правильно?
+                            foreach (var item in currentTable.persons.ToArray())
                             {
                                 if (!GetExistingConnectionEmployees(item, currentEmployee))
                                 {
