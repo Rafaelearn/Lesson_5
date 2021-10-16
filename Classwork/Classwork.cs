@@ -69,7 +69,7 @@ namespace Classwork
             //DoTask1();
             //DoTask2();
             //DoTask3();
-            //DoTask4();
+            DoTask4();
             //DoTask5();
             Console.ReadKey();
         }
@@ -253,24 +253,37 @@ namespace Classwork
             {
                 Employee currentEmployee = queEmployee.Dequeue();
                 Table tableLastFree;
-                while (stackTable.Count != 0)
+                Table currentTable;
+                tableLastFree.colour = "";
+                tableLastFree.number = 0;
+                tableLastFree.persons = new List<Employee>();
+                bool flagFoundPlace = false;
+                while (stackTable.Count != 0 && !flagFoundPlace)
                 {
-                    Table currentTable = stackTable.Pop();
-                    if (currentEmployee.stupidity)
+                    currentTable = stackTable.Pop();
+                    if (currentTable.persons.Count == 0)
                     {
-                        if(currentTable.persons.Count < 4)
+                        currentTable.persons.Add(currentEmployee);
+                        stackTable.Push(currentTable);
+                        flagFoundPlace = true;
+                    }
+                    else if (currentEmployee.stupidity)
+                    {
+                        if(currentTable.persons.Count < 3)
                         {
-                            if (currentTable.persons.Count == 0)
-                            {
-                                tableLastFree =  currentTable;
-                            }
-                            foreach (var item in currentTable.persons)
+                            tableLastFree = currentTable;
+                           foreach (var item in currentTable.persons.ToArray())
                             {
                                 if (!GetExistingConnectionEmployees(item, currentEmployee))
                                 {
                                     currentTable.persons.Add(currentEmployee);
                                     stackTable.Push(currentTable);
+                                    flagFoundPlace = true;
                                 }
+                            }
+                            if (!flagFoundPlace)
+                            {
+                                containerTable.Push(currentTable);
                             }
                         }
                         else
@@ -280,21 +293,24 @@ namespace Classwork
                     }
                     else
                     {
+                        
                         if (currentEmployee.impudence > 0)
                         {
-                            if (currentTable.persons.Count < 5)
+                            if (currentTable.persons.Count < 4)
                             {
-                                if (currentTable.persons.Count == 0)
-                                {
-                                    tableLastFree = currentTable;
-                                }
-                                foreach (var item in currentTable.persons)
+                                tableLastFree = currentTable;
+                                foreach (var item in currentTable.persons.ToArray())
                                 {
                                     if (GetExistingConnectionEmployees(item, currentEmployee))
                                     {
                                         currentTable.persons.Add(currentEmployee);
                                         stackTable.Push(currentTable);
+                                        flagFoundPlace = true;
                                     }
+                                }
+                                if (!flagFoundPlace)
+                                {
+                                    containerTable.Push(currentTable);
                                 }
                             }
                             else
@@ -304,19 +320,21 @@ namespace Classwork
                         }
                         else
                         {
-                            if (currentTable.persons.Count < 4)
+                            if (currentTable.persons.Count < 3)
                             {
-                                if (currentTable.persons.Count == 0)
-                                {
-                                    tableLastFree = currentTable;
-                                }
-                                foreach (var item in currentTable.persons)
+                                tableLastFree = currentTable;
+                                foreach (var item in currentTable.persons.ToArray())
                                 {
                                     if (GetExistingConnectionEmployees(item, currentEmployee))
                                     {
                                         currentTable.persons.Add(currentEmployee);
                                         stackTable.Push(currentTable);
+                                        flagFoundPlace = true;
                                     }
+                                }
+                                if (!flagFoundPlace)
+                                {
+                                    containerTable.Push(currentTable);
                                 }
                             }
                             else
@@ -325,18 +343,37 @@ namespace Classwork
                             }
                         }
                     }
-                    while (containerTable.Count != 0)
+                }
+                while (containerTable.Count != 0 && !flagFoundPlace)
+                {
+                    currentTable = containerTable.Pop();
+                    if (tableLastFree.number == currentTable.number)
                     {
-                        stackTable.Push(containerTable.Pop());
+                        tableLastFree.persons.Add(currentEmployee);
+                        stackTable.Push(currentTable);
+                        flagFoundPlace = true;
+                    }
+                    else
+                    {
+                        stackTable.Push(currentTable);
                     }
                 }
-                
+                while (containerTable.Count != 0)
+                {
+                    stackTable.Push(containerTable.Pop());
+                }
+                if (!flagFoundPlace)
+                {
+                    Console.WriteLine($"К сожалению, сотрудник {currentEmployee.name} {currentEmployee.position}" +
+                        " не нашел свободного места!  Поэтому он будет кушать стоя");
+                }
             }
             Console.WriteLine("\nСписок столов: ");
             foreach (var item in stackTable)
             {
-                Console.WriteLine("Номер стола - " + item.number);
+                Console.WriteLine("\n\nНомер стола - " + item.number);
                 Console.WriteLine("Цвет стола - " + item.colour);
+                Console.WriteLine($"Количество персон за столом: {item.persons.Count}");
                 Console.WriteLine("Персоны за столом: ");
                 foreach (var person in item.persons)
                 {
@@ -590,7 +627,7 @@ namespace Classwork
                     string[] dateEmployee = stringfromfile.Split();
                     if (dateEmployee.Length != 4)
                     {
-                        Console.WriteLine($"Длина  строки {numberString} не соответсвует формату");
+                        Console.WriteLine($"Длина  строки {numberString} не соответсвует формату. Работники");
                     }
                     else
                     {
@@ -642,7 +679,7 @@ namespace Classwork
                     string[] dateTable = stringfromfile.Split();
                     if (dateTable.Length != 2)
                     {
-                        Console.WriteLine($"Длина  строки {numberString} не соответсвует формату");
+                        Console.WriteLine($"Длина  строки {numberString} не соответсвует формату. Столы");
                     }
                     else
                     {
