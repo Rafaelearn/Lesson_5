@@ -14,7 +14,9 @@ namespace Classwork
         private const string PathToListTablesForEmployees = @"..\..\files\ListTables.txt";
         private const string PathToListHospitals = @"..\..\files\ListHospitals.txt";
         private const string PathToListMatesEmployees = @"..\..\files\ListMatesEmployees.txt";
+        private const string PathToDirWithImages = @"..\..\files\Images";
         static List<string> listMates = new List<string>();
+        static Random random = new Random();
         enum Disease : byte
         {
             Оспа = 1,
@@ -66,9 +68,9 @@ namespace Classwork
         static void Main(string[] args)
         {
             //DoTask1();
-            //DoTask2();
+            DoTask2();
             //DoTask3();
-            DoTask4();
+            //DoTask4();
             //DoTask5();
             Console.ReadKey();
         }
@@ -109,10 +111,25 @@ namespace Classwork
         }
         static void DoTask2()
         {
-            List<Image> imageList = new List<Image>();
-            for (int i = 0; i < 64; i++)
+            DirectoryInfo dirImage = new DirectoryInfo(PathToDirWithImages);
+            List<FileInfo> imageList = new List<FileInfo>();
+            imageList.AddRange(dirImage.GetFiles());
+            Console.WriteLine("Картинки: ");
+            foreach (var item in imageList)
             {
-                imageList.Add(Image.FromFile(@"" +@"{i}"));
+                Console.WriteLine(item.Name);
+            }
+            for (byte i = 0; i < imageList.Count; i++)
+            {
+                int indexRand = random.Next(imageList.Count);
+                var temp = imageList[i];
+                imageList[i] = imageList[indexRand];
+                imageList[indexRand] = temp;
+            }
+            Console.WriteLine("\n\nКартинки после сортировки: ");
+            foreach (var item in imageList)
+            {
+                Console.WriteLine(item.Name);
             }
         }
         static void DoTask3()
