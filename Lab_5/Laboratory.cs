@@ -9,10 +9,25 @@ namespace Lab_5
     {
         static Random random = new Random();
         static FileInfo fileText = new FileInfo(@"..\..\files\Text.txt");
+        enum Mounth:byte
+        {
+            January,
+            February,
+            March,
+            April,
+            May,
+            June,
+            July,
+            August,
+            September,
+            Ocober,
+            November,
+            December
+        }
         static void Main(string[] args)
         {
             DoClasswork();
-            DoHomework();
+            //DoHomework();
             Console.ReadKey();
         }
         static void DoClasswork() 
@@ -135,7 +150,48 @@ namespace Lab_5
                 Console.WriteLine($"Consonants in the text {countconsonants}");
             }
 
-            Console.WriteLine("Home Exercise 6.2");
+            Console.WriteLine("\nHome Exercise 6.2");
+            LinkedList<LinkedList<double>> matrix1 = new LinkedList<LinkedList<double>>();
+            LinkedList<LinkedList<double>> matrix2 = new LinkedList<LinkedList<double>>();
+            int indEqlRnd = random.Next(3, 10);
+            LinkedList<double> matrString = new LinkedList<double>();
+            for (int i = 0; i < random.Next(3, 10); i++)
+            {
+                for (int j = 0; j < indEqlRnd; j++)
+                {
+                    matrString.AddLast(random.Next(5000) / 100.0);
+                }
+                matrix1.AddLast(matrString);
+            }
+            for (int i = 0; i < indEqlRnd; i++)
+            {
+                for (int j = 0; j < random.Next(3, 10); j++)
+                {
+                    matrString.AddLast(random.Next(5000) / 100.0);
+                }
+                matrix2.AddLast(matrString);
+            }
+            Console.WriteLine("Результат умножения матриц: ");
+            //Print2DMatrix(MultiplyMatrix(matrix1, matrix2));
+
+
+            Console.WriteLine("\nHome Exercise 6.3");
+            Dictionary<Mounth, double[]> tInMounthDict = new Dictionary<Mounth, double[]>();
+            for (byte i = 0; i < 12; i++)
+            {
+                double[] tInMounth = new double[30];
+                for (int j = 0; j < tInMounth.Length; j++)
+                {
+                    tInMounth[j] = random.Next(600) / 10.0 - 30;
+                }
+                tInMounthDict.Add((Mounth)i, tInMounth);
+            }
+            double[] tAverage = GetArrayOFAverageTemperature(tInMounthDict);
+            Array.Sort(tAverage);
+            foreach (var item in tAverage)
+            {
+                Console.WriteLine(item);
+            }
         }
         static void CountLetter(char[] arrayChar, out uint volews, out uint consonants)
         {
@@ -193,6 +249,15 @@ namespace Lab_5
             }
             return result;
         }
+        static LinkedList<LinkedList<double>> MultiplyMatrix(LinkedList<LinkedList<double>> m1, LinkedList<LinkedList<double>> m2)
+        {
+            LinkedList<LinkedList<double>>  result = new LinkedList<LinkedList<double>>();
+            for (int i = 0; i < m1.Count; i++)
+            {
+                result.AddLast(new LinkedList<double>());
+            }
+            return result;
+        }
         static void Print2DMatrix(double[,] m)
         {
             for (int i = 0; i < m.GetLength(0); i++)
@@ -214,6 +279,19 @@ namespace Lab_5
                     temperatureAverage[i] += temperature[i, j];
                 }
                 temperatureAverage[i] /= 12;
+            }
+            return temperatureAverage;
+        }
+        static double[] GetArrayOFAverageTemperature(Dictionary<Mounth, double[]> tDict)
+        {
+            double[] temperatureAverage = new double[tDict.Count];
+            for (byte i = 0; i < tDict.Keys.Count; i++)
+            {
+                foreach (var item in tDict[(Mounth)i])
+                {
+                    temperatureAverage[i] += item; 
+                }
+                temperatureAverage[i] /= tDict.Keys.Count;
             }
             return temperatureAverage;
         }

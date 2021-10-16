@@ -68,7 +68,7 @@ namespace Classwork
         static void Main(string[] args)
         {
             //DoTask1();
-            DoTask2();
+            //DoTask2();
             //DoTask3();
             //DoTask4();
             //DoTask5();
@@ -134,17 +134,17 @@ namespace Classwork
         }
         static void DoTask3()
         {
-            Dictionary<string, Student> studentDict = new Dictionary<string, Student>();
+            Dictionary<int, Student> studentDict = new Dictionary<int, Student>();
+            int numberStudent = 0;
             using (StreamReader fileTextRead = new StreamReader(PathToListStudent))
             {
                 string stringfromfile;
-                int numberString = 1;
                 while ((stringfromfile = fileTextRead.ReadLine()) != null)
                 {
                     string[] dateStudent = stringfromfile.Split();
                     if (dateStudent.Length != 5)
                     {
-                        Console.WriteLine($"Длина {numberString} строки не соответсвует формату");
+                        throw new FormatException($"Длина {numberStudent} строки не соответсвует формату");
                     }
                     else
                     {
@@ -153,17 +153,17 @@ namespace Classwork
                         studentNew.name = dateStudent[1];
                         if (!ushort.TryParse(dateStudent[2], out studentNew.yearOFBirth))
                         {
-                            throw new FormatException($"fileListStudents. Wrong format the year of Birth. String {numberString}");
+                            throw new FormatException($"fileListStudents. Wrong format the year of Birth. String {numberStudent}");
                         }
 
                         studentNew.subjectBase = dateStudent[3];
                         if (!ushort.TryParse(dateStudent[4], out studentNew.scores) || studentNew.scores > 310)
                         {
-                            throw new FormatException($"fileListStudents. Wrong format of scorces. String {numberString}");
+                            throw new FormatException($"fileListStudents. Wrong format of scorces. String {numberStudent}");
                         }
-                        studentDict.Add(dateStudent[0]+" "+dateStudent[1], studentNew);
+                        studentDict.Add(numberStudent, studentNew);
                     }
-                    numberString++;
+                    numberStudent++;
                 }
             }
             bool flag = true;
@@ -197,28 +197,35 @@ namespace Classwork
                             Console.WriteLine("Wrong format of scores. New student of user");
                             break;
                         }
-                        studentDict.Add(studentNew.lastName + " "+ studentNew.name, studentNew);
+                        numberStudent++;
+                        studentDict.Add(numberStudent, studentNew);
                         break;
                     case ConsoleKey.D2:
                     case ConsoleKey.NumPad2:
-                        Console.Write("Введите фамилию и имя студента через пробел: ");
-                        string studentRemofe = Console.ReadLine();
-                        if (!studentDict.Remove(studentRemofe))
+                        Console.Write("Введите фамилию студента: ");
+                        string studRemofeLastName = Console.ReadLine();
+                        Console.Write("Введите имя студента: ");
+                        string studRemofeName = Console.ReadLine();
+                        foreach (int item in studentDict.Keys)
                         {
-                            Console.WriteLine("Такого студента не сущетсвует");
+                            if (studentDict[item].name.Equals(studRemofeName) && studentDict[item].lastName.Equals(studRemofeLastName))
+                            {
+                                studentDict.Remove(item);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Такого студента не сущетсвует");
+                            }
                         }
                         break;
                     case ConsoleKey.D3:
                     case ConsoleKey.NumPad3:
-                        List<Student> studentsList = new List<Student>();
-                        foreach (var item in studentDict)
+                        studentDict = QuickSortListStruct(studentDict);
+                        foreach (var item in studentDict.Keys)
                         {
-                            studentsList.Add(item.Value);
-                        }
-                        foreach (var item in QuickSortListStruct(studentsList))
-                        {
-                            Console.WriteLine(item.lastName + " "+ item.name + " "
-                                +item.yearOFBirth + " "+ item.subjectBase + " "+ item.scores);
+                            Student student = studentDict[item];
+                            Console.WriteLine(student.lastName + " "+ student.name + " "
+                                +student.yearOFBirth + " "+ student.subjectBase + " "+ student.scores);
                         }
                         break;
                     default:
@@ -533,68 +540,58 @@ namespace Classwork
             }
             return bitmap;
         }
-        static void Swap(ref Student x, ref Student y)
+        static void Swap(int key1 , int key2 , ref Dictionary<int, Student> dict)
         {
-            var t = x;
-            x = y;
-            y = t;
+            Student temp = dict[key1];
+            dict[key1] = dict[key2];
+            dict[key2] = temp;
         }
-        static List<Student> QuickSortListStruct(List<Student> list, int left, int right)
+        static Dictionary<int, Student> QuickSortListStruct(Dictionary<int, Student> dict)
         {
-            Student a, b;
+            int left = 0, right = dict.Count - 1;
             if (left >= right)
             {
-                return list;
+                return dict;
             }
             var fundation = left - 1;
             for (var i = left; i < right; i++)
             {
-                if (list[i].scores < list[right].scores)
+                if (dict[i].scores < dict[right].scores)
                 {
                     fundation++;
-                    a = list[fundation];
-                    b = list[i];
-                    Swap(ref a, ref b);
+                    Swap(fundation, i, ref dict);
                 }
             }
 
             fundation++;
-            a = list[fundation];
-            b = list[right];
-            Swap(ref a, ref b);
-            QuickSortListStruct(list, left, fundation - 1);
-            QuickSortListStruct(list, fundation + 1, right);
+            Swap(fundation, right, ref dict);
+            QuickSortListStruct(dict, left, fundation - 1);
+            QuickSortListStruct(dict, fundation + 1, right);
 
-            return list;
+            return dict;
         }
-        static List<Student> QuickSortListStruct(List<Student> list)
+        static Dictionary<int, Student> QuickSortListStruct(Dictionary<int, Student> dict, int left, int right)
         {
-            int left = 0, right = list.Count() - 1;
-            Student a, b;
             if (left >= right)
             {
-                return list;
+                return dict;
             }
             var fundation = left - 1;
             for (var i = left; i < right; i++)
             {
-                if (list[i].scores < list[right].scores)
+                if (dict[i].scores < dict[right].scores)
                 {
                     fundation++;
-                    a = list[fundation];
-                    b = list[i];
-                    Swap(ref a, ref b);
+                    Swap(fundation, i, ref dict);
                 }
             }
 
             fundation++;
-            a = list[fundation];
-            b = list[right];
-            Swap(ref a, ref b);
-            QuickSortListStruct(list, left, fundation - 1);
-            QuickSortListStruct(list, fundation + 1, right);
+            Swap(fundation, right, ref dict);
+            QuickSortListStruct(dict, left, fundation - 1);
+            QuickSortListStruct(dict, fundation + 1, right);
 
-            return list;
+            return dict;
         }
         static void FillQueueOfEmployees (ref Queue<Employee> queueEmployee)
         {
